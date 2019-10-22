@@ -22,6 +22,8 @@ const signIn = (email, password) => firebase.auth().signInWithEmailAndPassword(e
 
 const signUp = (email, password) => firebase.auth().createUserWithEmailAndPassword(email, password);
 
+const auth = () => firebase.auth()
+
 const referenceField = (model, _id) => {
   const db = firebase.firestore();
   return db.doc(`${model}/${_id}`);
@@ -80,14 +82,12 @@ const collection = (collectionName) => {
       i += 1;
     });
     if (populate) {
-      populate.map(async (populatePath) => {
-        for (let i = 0; i < data.length; i++) {
-          if (data[i][populatePath]) {
-            const child = await data[i][populatePath].get()
-            data[i][populatePath] = child.data();
-          };
+      for (let i = 0; i < data.length; i++) {
+        if (data[i][populate]) {
+          const child = await data[i][populate].get()
+          data[i][populate] = child.data();
         };
-      });
+      };
     }
     return { data, total }
   }
@@ -177,6 +177,7 @@ const collection = (collectionName) => {
 
 const mxFirebase = {
   init,
+  auth,
   putFiles,
   collection,
   referenceField,
